@@ -3,7 +3,10 @@
 
 package imghash
 
-import "image"
+import (
+	"image"
+	"image/jpeg"
+)
 
 // Average computes a Perceptual Hash using a naive, but very fast method.
 // It holds up to minor colour changes, changing brightness and contrast and
@@ -20,6 +23,12 @@ import "image"
 // because the colors move along a non-linear scale -- changing where the
 // "average" is located and therefore changing which bits are above/below the
 // average.
+
+// Allows hashing of JPEG/JPG files. Without this, calling At() on JPEG files will cause an "unknown format" error
+func init() {
+	image.RegisterFormat("jpeg", "jpeg", jpeg.Decode, jpeg.DecodeConfig)
+}
+
 func Average(img image.Image) uint64 {
 	img = resize(img, 8, 8)
 	img = grayscale(img)
