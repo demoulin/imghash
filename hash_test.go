@@ -13,7 +13,7 @@ import (
 // Maximum Hamming-distance at which we consider images to be equal.
 const MaxDistance = 3
 
-func TestResize(t *testing.T) {
+func TestResizePNG(t *testing.T) {
 	img, err := loadImg("testdata/gopher_large.png")
 	if err != nil {
 		t.Fatal(err)
@@ -27,11 +27,35 @@ func TestResize(t *testing.T) {
 	}
 }
 
-func TestAverage(t *testing.T) {
+func TestResizeJPG(t *testing.T) {
+	img, err := loadImg("testdata/gopher_large.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	img = resize(img, 32, 32)
+
+	err = saveImg(img, "testdata/gopher_32x32.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAveragePNG(t *testing.T) {
 	a := getHash(t, Average, "testdata/gopher_large.png")
 	b := getHash(t, Average, "testdata/gopher_small.png")
-
 	dist := Distance(a, b)
+
+	if dist > MaxDistance {
+		t.Fatalf("Hash mismatch: 0x%x 0x%x %d\n", a, b, dist)
+	}
+}
+
+func TestAverageJPG(t *testing.T) {
+	a := getHash(t, Average, "testdata/gopher_large.jpg")
+	b := getHash(t, Average, "testdata/gopher_small.jpg")
+	dist := Distance(a, b)
+
 	if dist > MaxDistance {
 		t.Fatalf("Hash mismatch: 0x%x 0x%x %d\n", a, b, dist)
 	}
